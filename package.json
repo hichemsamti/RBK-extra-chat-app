@@ -1,0 +1,26 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "*",
+    "socket.io": "*"
+  },
+  "devDependencies": {
+    "nodemon": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hichemsamti/RBK-extra-chat-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hichemsamti/RBK-extra-chat-app/issues"
+  },
+  "homepage": "https://github.com/hichemsamti/RBK-extra-chat-app#readme"
+}
