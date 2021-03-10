@@ -26,6 +26,7 @@
 					
       </div>!-->
     </main>
+    <Room :messages="messages" :sendMessage="this.sendMessage"></Room>
    <!-- <div class="chat-form-container">
       <form id="chat-form">
         <input
@@ -46,12 +47,14 @@
 <script>
 
 import io from 'socket.io-client'
+import Room from "./components/Room"
 
 
 export default {
   name: 'App',
   components: {
     
+    Room,
   },
   data(){
     return{
@@ -77,7 +80,7 @@ export default {
 
     listen(){
 
-    this.socket.on("msg")
+    
     this.socket.on("userOnline",user=>{
       this.users.push(user)
 
@@ -92,6 +95,9 @@ export default {
 
 
 
+    },
+    sendMessage(message){
+      this.socket.emit('msg',message)
     }
   }
 

@@ -1,6 +1,6 @@
 <template>
  <div class="chat-form-container">
-     <div class="chat-messages" v-for="(message,index) in messages">
+     <div class="chat-messages" v-for="(message,index) in messages" :key="index">
      <p class="meta">${message.username} <span>${message.time}</span></p>
     <p class="text">
        ${message.text}
@@ -26,6 +26,27 @@
 
 
 <script>
+
+export default {
+
+    name:"Room",
+    props:["messages"],
+    data(){
+        return{
+            msg:""
+
+        }
+
+    },
+
+    methods:{
+        sendMessage(){
+            this.$emit("sendMessage", this.msg)
+            this.msg=""
+        }
+    }
+
+}
 
 
 </script>
