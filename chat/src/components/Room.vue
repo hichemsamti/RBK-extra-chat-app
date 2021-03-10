@@ -1,105 +1,38 @@
 <template>
-  <div id="app">
-   <div class="chat-container">
-    <header class="chat-header">
-      <h1><i class="fas fa-smile"></i> welcome {{username}} ChatCord</h1>
-      <a href="index.html" class="btn">Leave Room</a>
-    </header>
-    <main class="chat-main">
-      <div class="chat-sidebar">
-        <h3><i class="fas fa-comments"></i> Room Name:</h3>
-        <h2 id="room-name"></h2>
-        <div class="dropdown">
-  <button class="dropbtn">Rooms</button>
-  <div class="dropdown-content">
-    <a href="#">Link 1</a>
-    <a href="#">Link 2</a>
-    <a href="#">Link 3</a>
-  </div>
-</div>
-        <h3><i class="fas fa-users"></i> Users</h3>
-        <ul id="users">
-         
-        </ul>
-      </div>
-      <!--<div class="chat-messages">
-					
-      </div>!-->
-    </main>
-   <!-- <div class="chat-form-container">
-      <form id="chat-form">
+ <div class="chat-form-container">
+     <div class="chat-messages" v-for="(message,index) in messages">
+     <p class="meta">${message.username} <span>${message.time}</span></p>
+    <p class="text">
+       ${message.text}
+    </p>
+    </div>
+      <form id="chat-form" @submit="sendMessage">
         <input
+          v-model="msg"
           id="msg"
           type="text"
           placeholder="Enter Message"
           required
           autocomplete="off"
         />
-        <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+        <button class="btn" @click="sendMessage" :disabled="!msg"><i class="fas fa-paper-plane"></i> Send</button>
       </form>
-    </div>!-->
-  </div>
+    </div>
 
-  </div>
+
+
+
 </template>
+
 
 <script>
 
-import io from 'socket.io-client'
-
-
-export default {
-  name: 'App',
-  components: {
-    
-  },
-  data(){
-    return{
-      username:"",
-      socket:io("localhost:3001"),
-      messages:[],
-      users:[]
-
-    }
-
-
-  },
-  methods:{
-    joinServer(){
-      this.socket.on("loggedIn", data=>{
-        this.messages=data.messages
-        this.users=data.users
-        this.socket.emit('newuser',this.username)
-
-      })
-      this.listen()
-    },
-
-    listen(){
-
-    this.socket.on("msg")
-    this.socket.on("userOnline",user=>{
-      this.users.push(user)
-
-    }),
-    this.socket.on("userLeft", user=>{
-      this.users.splice(this.users.indexOf(user),1)
-    }),
-
-    this.socket.on("msg",message=>{
-      this.messages.push(message)
-    })
-
-
-
-    }
-  }
-
-}
 
 </script>
 
+
 <style>
+
  @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 
@@ -340,6 +273,5 @@ a {
 .dropdown:hover .dropbtn {
   background-color: #8e3e66;
 }
-
 
 </style>
