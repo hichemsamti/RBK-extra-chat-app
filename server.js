@@ -6,15 +6,16 @@ const io= require("socket.io")(http)
 
 
 let users=[];
-let message=[];
+let messages=[];
 let index=[];
 
 
 io.on("connection",socket=>{
 
-
+     
     socket.emit("loggedIn",{
-        users: users.map(s=>s.username)
+        users: users.map(s=>s.username),
+        messages:messages
 
     })
 
@@ -25,9 +26,26 @@ io.on("connection",socket=>{
         console.log(`${username} has entered`)
         socket.username=username
         users.push(socket)
+           // add every new user who entered
+        io.emit("userOnline",socket.username)
 
 
     })
+
+     socket.on('msg', msg=>{
+         let message ={
+             index:index,
+             username:socket.username,
+             msg:msg
+         }
+
+         messages.push(message)
+
+         io.emit("msg",message)
+
+         index++
+
+     })
 
 
 
@@ -40,6 +58,9 @@ io.on("connection",socket=>{
 
     socket.on("disconnect",() =>{
         console.log(`${socket.username} has left`)
+
+        io.emit("userLeft",socket.username)
+        users.splice(users.indexOf(socket),1)
 
     })
 })
