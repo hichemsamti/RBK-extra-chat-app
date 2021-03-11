@@ -1,9 +1,9 @@
 <template>
  <div class="chat-form-container">
      <div class="chat-messages" v-for="(message,index) in messages" :key="index">
-     <p class="meta">${message.username} <span>${message.time}</span></p>
+     <p class="meta">{{message.username}} <span>{{message.time}}</span></p>
     <p class="text">
-       ${message.text}
+       {{message.text}}
     </p>
     </div>
       <form id="chat-form" @submit="sendMessage">
@@ -42,6 +42,7 @@ export default {
     methods:{
         sendMessage(){
             this.$emit("sendMessage", this.msg)
+			console.log(this.msg)
             this.msg=""
         }
     }
