@@ -2,24 +2,31 @@
   <div id="app">
    <div class="chat-container">
     <header class="chat-header">
-      <h1><i class="fas fa-smile"></i> welcome  </h1>
-      <a href="index.html" class="btn">Leave Room</a>
+      <h1><i class="fas fa-smile"></i> welcome to :{{room}} room</h1>
+      <router-link to="/" class="btn" >Quit</router-link>
     </header>
     <main class="chat-main">
       <div class="chat-sidebar">
         <h3><i class="fas fa-comments"></i> Room Name:</h3>
-        <h2 id="room-name"></h2>
+        <h2 id="room-name">{{room}}</h2>
         <div class="dropdown">
   <button class="dropbtn">Rooms</button>
   <div class="dropdown-content">
-    <a href="#">Link 1</a>
+    <label for="room"></label>
+          <select v-model="roomOption" @change="changeRoom"  >
+            <option value="welcome">welcome</option>
+            <option value="Room2">Room2</option>
+            <option value="Room3">Room3</option>
+         
+           </select> 
+   <!-- <a href="#">Link 1</a>
     <a href="#">Link 2</a>
-    <a href="#">Link 3</a>
+    <a href="#">Link 3</a>!-->
   </div>
 </div>
         <h3><i class="fas fa-users"></i> Users</h3>
-        <ul id="users">
-         
+        <ul id="users" v-for="(user,index) in users" :key="index">
+           <li>{{user.username}}</li>
         </ul>
       </div>
       <!--<div class="chat-messages">
@@ -65,7 +72,8 @@ export default {
       
       users:[],
       id:0,
-      room:"welcome"
+      room:"welcome",
+      roomOption:"welcome"
       
 
     }
@@ -112,17 +120,30 @@ export default {
   
   methods:{
 
+     changeRoom(){
+            
+     
+                this.room=this.roomOption
+                console.log(this.room)
+                this.socket.emit('joinRoom', {username:this.username,room:this.room})
+                console.log(this.username,this.room)
+             
+                
+    },
+
     joinServer(){
       
     
     
 
     this.socket.emit('joinRoom', {username:this.username,room:this.room})
-    console.log("hiii"+ this.username,this.room)
+    console.log(this.username,this.room)
 
     
     
     this.listen()
+
+    
 
    
 
@@ -141,7 +162,17 @@ export default {
        
      
 
-    })
+    }),
+
+       this.socket.on('roomUsers',({room, users})=>{
+   
+    console.log("all"+room + users)
+    this.users=[...users]
+    console.log(this.users)
+
+})
+
+
     },
 
 
@@ -405,7 +436,7 @@ a {
 
 .dropbtn {
   background-color: #774caf;
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 16px;
   font-family: 'Roboto', sans-serif;
 	font-size: 18px;
@@ -423,8 +454,8 @@ a {
 .dropdown-content {
   display: none;
   position: relative;
-  background-color: #f9f9f9;
-  min-width: 90px;
+  background-color:white;
+  min-width: 85px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
 }

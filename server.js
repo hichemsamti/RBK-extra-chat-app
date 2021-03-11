@@ -95,7 +95,11 @@ app.use("/auth",authRoutes)
 
 
 
+// set routes for chat rooms
 
+app.post("/room",(req,res)=>{
+    const room=req.body.room
+})
 
 
 
