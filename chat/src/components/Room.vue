@@ -1,8 +1,8 @@
 <template>
  <div class="chat-form-container">
      <div class="chat-messages" v-for="(message,index) in messages" :key="index">
-     <p class="meta">{{message.username}} <span>{{message.time}}</span></p>
-    <p class="text">
+     <p  class="meta">{{message.username}} <span>{{message.time}}</span></p>
+    <p  class="text">
        {{message.text}}
     </p>
     </div>
@@ -30,7 +30,7 @@
 export default {
 
     name:"Room",
-    props:["messages"],
+    props:["messages","room"],
     data(){
         return{
             msg:""

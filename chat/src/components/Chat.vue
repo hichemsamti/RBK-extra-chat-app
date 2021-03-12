@@ -2,50 +2,44 @@
   <div id="app">
    <div class="chat-container">
     <header class="chat-header">
-      <h1><i class="fas fa-smile"></i> welcome to :{{room}} room</h1>
+      <h1><i class="fas fa-smile"></i>{{username}} welcome to :{{room}} </h1>
       <router-link to="/" class="btn" >Quit</router-link>
     </header>
     <main class="chat-main">
       <div class="chat-sidebar">
         <h3><i class="fas fa-comments"></i> Room Name:</h3>
         <h2 id="room-name">{{room}}</h2>
+      
         <div class="dropdown">
-  <button class="dropbtn">Rooms</button>
+  <button class="dropbtn">Rooms</button><br>
+  <input v-model="newRoom" type="text" placeholder= "create room" @change="createRoom"> 
   <div class="dropdown-content">
-    <label for="room"></label>
-          <select v-model="roomOption" @change="changeRoom"  >
-            <option value="welcome">welcome</option>
-            <option value="Room2">Room2</option>
-            <option value="Room3">Room3</option>
-         
+   <label for="room"></label>
+          <select v-for="(createdRoom , index) in createdRooms" :key=index v-model="roomOption"  @change="changeRoom" >
+            <option :value="createdRoom">{{createdRoom}}</option>
+            
+            
            </select> 
-   <!-- <a href="#">Link 1</a>
-    <a href="#">Link 2</a>
-    <a href="#">Link 3</a>!-->
+ 
   </div>
+
+ 
+
+
+
+  
+
 </div>
+ 
         <h3><i class="fas fa-users"></i> Users</h3>
         <ul id="users" v-for="(user,index) in users" :key="index">
            <li>{{user.username}}</li>
         </ul>
       </div>
-      <!--<div class="chat-messages">
-					
-      </div>!-->
+      
     </main>
-    <Room :messages="messages" @sendMessage="this.sendMessage"></Room>
-   <!-- <div class="chat-form-container">
-      <form id="chat-form">
-        <input
-          id="msg"
-          type="text"
-          placeholder="Enter Message"
-          required
-          autocomplete="off"
-        />
-        <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
-      </form>
-    </div>!-->
+    <Room :messages="messages" @sendMessage="this.sendMessage"  :room="this.roomOption"></Room>
+
   </div>
 
   </div>
@@ -73,7 +67,9 @@ export default {
       users:[],
       id:0,
       room:"welcome",
-      roomOption:"welcome"
+      roomOption:"welcome",
+      createdRooms:["welcome","Room2","Room3"],
+      newRoom:""
       
 
     }
@@ -114,19 +110,34 @@ export default {
  },
 
 
+ 
+ 
+
+
+
    
   
 
   
   methods:{
 
-     changeRoom(){
+
+       createRoom(){
+      
+      this.socket.emit('room',this.newRoom)
+      this.newRoom=""
+      
+     
+    },
+
+    changeRoom(){
             
      
                 this.room=this.roomOption
                 console.log(this.room)
                 this.socket.emit('joinRoom', {username:this.username,room:this.room})
                 console.log(this.username,this.room)
+              
              
                 
     },
@@ -170,7 +181,11 @@ export default {
     this.users=[...users]
     console.log(this.users)
 
-})
+}),
+
+     this.socket.on('roomSend',room =>{
+       this.createdRooms.push(room.room)
+     })
 
 
     },
@@ -183,48 +198,16 @@ export default {
     console.log('hiiiiiiiiiii')
     },
 
+
+    
+      
+    
+
     
 
     }
 
-    /* listen(){
-
-     
-
-     }*/
-  
-  
-
-   /* joinServer(){
-      this.socket.on("loggedIn", data=>{
-        this.messages=data.messages
-        this.users=data.users
-        this.socket.emit('newuser',this.username)
-        console.log('hiiiiiii')
-
-      })
-      this.listen()
-    },
-
-
-    listen(){
-
     
-    this.socket.on("userOnline",user=>{
-      this.users.push(user)
-
-    }),
-    this.socket.on("userLeft", user=>{
-      this.users.splice(this.users.indexOf(user),1)
-    }),
-
-    this.socket.on("msg",message=>{
-      this.messages.push(message)
-    })
-
-
-
-    },*/
  
 
     
@@ -313,6 +296,7 @@ a {
 	color: #fff;
 	padding: 20px 20px 60px;
 	overflow-y: scroll;
+  width:1070px
 }
 
 .chat-sidebar h2 {
@@ -375,7 +359,7 @@ a {
 .join-container {
 	max-width: 500px;
 	margin: 80px auto;
-	color: #fff;
+	color: rgb(99, 37, 37);
 }
 
 .join-header {

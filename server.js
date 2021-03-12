@@ -95,17 +95,12 @@ app.use("/auth",authRoutes)
 
 
 
-// set routes for chat rooms
 
-app.post("/room",(req,res)=>{
-    const room=req.body.room
-})
 
 
 
 let users=[];
-let messages=[];
-let index=[];
+
 
 
 io.on("connection",socket=>{
@@ -117,9 +112,9 @@ io.on("connection",socket=>{
 
       socket.join(user.room)
 
-      socket.emit('message',formatMessage("Admin", 'Welcome '))
+      socket.emit('message',formatMessage1("Admin", 'Welcome ',user.room))
 
-      socket.broadcast.to(user.room).emit("message", formatMessage("Admin",`${user.username} has joined the chat`))
+      socket.broadcast.to(user.room).emit("message", formatMessage1("Admin",`${user.username} has joined the chat`,user.room))
 
       io.to(user.room).emit('roomUsers',{
         room:user.room,
@@ -138,9 +133,45 @@ io.on("connection",socket=>{
     console.log(user)
    
 
-     io.to(user.room).emit('message',formatMessage(user.username, msg))
+     io.to(user.room).emit('message',formatMessage1(user.username, msg,user.room))
      
  })
+
+ socket.on('room',room=>{
+     console.log(room)
+     const user=getCurrentUser(socket.id)
+
+     io.to(user.room).emit("roomSend",{
+         room
+     })
+ })
+
+
+ socket.on('disconnect',()=>{
+    const user = userLeave(socket.id)
+    
+    if(user){
+
+    io.to(user.room).emit('message',formatMessage1("Admin",  ` ${user.username} user has left the chat`,user.room))
+
+    //send users and room info
+
+  io.to(user.room).emit('roomUsers',{
+    room:user.room,
+    users:getRoomUsers(user.room)
+})
+
+
+}
+
+
+
+
+  
+
+
+})
+ 
 
 
 })
@@ -148,63 +179,7 @@ io.on("connection",socket=>{
 
 
 
-/*io.on("connection",socket=>{
 
-    
-     
-    socket.emit("loggedIn",{
-        users: users.map(s=>s.username),
-        messages:messages
-        
-    })
-    
-
-
-
-    //a user entered
-    socket.on("newuser",username =>{
-        console.log("enteredddd")
-        console.log(`${username} has entered`)
-        socket.username=username
-        users.push(socket)
-           // add every new user who entered
-        io.emit("userOnline",socket.username)
-
-
-    })
-
-     socket.on('msg', msg=>{
-         let message ={
-             index:index,
-             username:socket.username,
-             msg:msg
-         }
-
-         messages.push(message)
-
-         io.emit("msg",message)
-
-         index++
-
-     })
-
-
-
-
-
-
-
-
-    //disconnect
-
-    socket.on("disconnect",() =>{
-        console.log(`${socket.username} has left`)
-
-        io.emit("userLeft",socket.username)
-        users.splice(users.indexOf(socket),1)
-
-    })
-})*/
 
 //////////////////////////// Join chat///////////////////////////////////
 function userJoin(id,username,room){
@@ -249,20 +224,21 @@ function getRoomUsers(room){
 }
 
 
-//////////////////////// message object//////////////////
 
-function formatMessage(username,text){
+
+//////////////////////message object with room//////////
+
+function formatMessage1(username,text,room){
     return {
         username,
         text,
-        time: moment().format('h:mm a')
+        time: moment().format('h:mm a'),
+        room
     }
 
     
    
 }
-
-
 
 http.listen(3001,()=>{
     console.log("listening on 3001")
